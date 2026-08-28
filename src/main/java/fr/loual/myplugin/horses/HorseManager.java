@@ -1,7 +1,8 @@
 package fr.loual.myplugin.horses;
 
 import org.bukkit.entity.Horse;
-
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -10,14 +11,48 @@ public class HorseManager {
 
     private final Map<UUID, HorseData> horses = new HashMap<>();
 
+    private static final double MAX_JUMP_MULTIPLIER = 1.3673;
+    private static final double MAX_JUMP_LEVEL = 9.0;
+    private static final double MAX_SAFE_FALL_DISTANCE = 15.0;
+
     public HorseData getData(Horse horse) {
         return horses.computeIfAbsent(
                 horse.getUniqueId(),
-                uuid -> new HorseData()
+                uuid -> new HorseData(horse)
         );
     }
 
     public void remove(Horse horse) {
         horses.remove(horse.getUniqueId());
+    }
+
+    public void applyStats(Horse horse) {
+        HorseData data = getData(horse);
+
+        applyJumpStats(horse);
+    }
+
+    public void applyJumpStats(Horse horse) {
+        AttributeInstance jumpAttribute = horse.getAttribute(Attribute.JUMP_STRENGTH);
+        HorseData horseData = getData(horse);
+
+        if (jumpAttribute == null) { return; }
+
+        double jumpLevel = horseData.getJumpLevel();
+        double multiplier = 1.0 + (0.041 * jumpLevel);
+        double baseJump = horseData.getBaseJumpStrength();
+        double newJump = baseJump * multiplier;
+        jumpAttribute.setBaseValue(newJump);
+        applySafeFallDistance(horse, jumpLevel);
+    }
+
+    private void applySafeFallDistance(Horse horse, double jumpLevel) { 
+        AttributeInstance safeFallAttribute = horse.getAttribute(Attribute.SAFE_FALL_DISTANCE); 
+
+        if (safeFallAttribute == null) { return; } 
+
+        if (jumpLevel >= 5) { 
+            safeFallAttribute.setBaseValue(MAX_SAFE_FALL_DISTANCE); 
+        } 
     }
 }

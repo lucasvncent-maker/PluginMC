@@ -10,9 +10,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class HorseApple {
+public class VigorApple {
 
-    private static final String ITEM_ID = "horse_apple";
+    private static final String ITEM_ID = "vigor_apple";
     private static final NamedTextColor color = NamedTextColor.GOLD;
     private static final Boolean isEnchanted = true;
     private static final String displayName = "Pomme de vigueur";

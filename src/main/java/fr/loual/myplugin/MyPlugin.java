@@ -1,10 +1,14 @@
 package fr.loual.myplugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.loual.myplugin.commands.Coords;
 import fr.loual.myplugin.commands.Elisa;
+
 import fr.loual.myplugin.recipes.HorseAppleRecipe;
+import fr.loual.myplugin.recipes.HorseAnalyzerRecipe;
+
 import fr.loual.myplugin.horses.HorseManager;
-import org.bukkit.plugin.java.JavaPlugin;
+
 import fr.loual.myplugin.listeners.HorseItemListener;
 
 public class MyPlugin extends JavaPlugin {
@@ -13,11 +17,11 @@ public class MyPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         
-
         getCommand("coords").setExecutor(new Coords());
         getCommand("elisa").setExecutor(new Elisa());
 
         HorseAppleRecipe.register(this);
+        HorseAnalyzerRecipe.register(this);
 
         getServer().getPluginManager().registerEvents(
                 new HorseItemListener(this),
