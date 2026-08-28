@@ -4,6 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import fr.loual.myplugin.MyPlugin;
 
 import fr.loual.myplugin.items.VigorApple;
+import fr.loual.myplugin.items.HasteBamboo;
 import fr.loual.myplugin.items.HorseAnalyzer;
 
 import fr.loual.myplugin.horses.HorseData;
@@ -43,6 +44,9 @@ public class HorseItemListener implements Listener {
             onVigorApple(plugin, horse, event, item);
         }
 
+        if (HasteBamboo.isHasteBamboo(plugin, item)) {
+            onHasteBamboo(plugin, horse, event, item);
+        }
     }
 
     @EventHandler
@@ -55,6 +59,22 @@ public class HorseItemListener implements Listener {
             onHorseAnalyzer(plugin, event, item); 
         }
 
+    }
+
+    public void onHasteBamboo(MyPlugin plugin, Horse horse, PlayerInteractEntityEvent event, ItemStack item) {
+        HorseData data = plugin.getHorseManager().getData(horse);
+
+        item.setAmount(item.getAmount() - 1);
+        if (data.getSpeedLevel() == data.MAX_SPEED_LEVEL) {
+            event.getPlayer().sendMessage("§6Votre cheval a déjà atteint le niveau de vitesse maximal !");
+            return;
+        }
+        
+        data.addSpeedLevel(1);
+        plugin.getHorseManager().applyStats(horse);
+
+        event.getPlayer().sendMessage("§6Votre cheval a gagné +1 niveau de vitesse !");
+        event.setCancelled(true);
     }
 
     public void onVigorApple(MyPlugin plugin, Horse horse, PlayerInteractEntityEvent event, ItemStack item) {

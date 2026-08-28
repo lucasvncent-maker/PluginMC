@@ -30,6 +30,7 @@ public class HorseManager {
         HorseData data = getData(horse);
 
         applyJumpStats(horse);
+        applySpeedStats(horse);
     }
 
     public void applyJumpStats(Horse horse) {
@@ -44,6 +45,19 @@ public class HorseManager {
         double newJump = baseJump * multiplier;
         jumpAttribute.setBaseValue(newJump);
         applySafeFallDistance(horse, jumpLevel);
+    }
+
+    public void applySpeedStats(Horse horse) {
+        AttributeInstance speedAttribute = horse.getAttribute(Attribute.MOVEMENT_SPEED);
+        HorseData horseData = getData(horse);
+
+        if (speedAttribute == null) { return; }
+
+        double speedLevel = horseData.getSpeedLevel();
+        double multiplier = 1.0 + (0.3 * speedLevel);
+        double baseSpeed= horseData.getBaseSpeed();
+        double newSpeed = baseSpeed * multiplier;
+        speedAttribute.setBaseValue(newSpeed);
     }
 
     private void applySafeFallDistance(Horse horse, double jumpLevel) { 
