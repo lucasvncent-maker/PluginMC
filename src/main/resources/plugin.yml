@@ -2,3 +2,12 @@ name: MyPlugin
 version: 1.0.0
 main: fr.loual.myplugin.MyPlugin
 api-version: '1.21.6'
+
+
+commands:
+  coords:
+    description: Affiche vos coordonnées
+    usage: /coords
+  elisa:
+    description: Dit les termes sur la goat
+    usage: /elisa
