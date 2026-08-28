@@ -1,11 +1,18 @@
 package fr.loual.myplugin.horses;
 
+import fr.loual.myplugin.items.DivineArmor;
 import org.bukkit.entity.Horse;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 
 public class HorseManager {
 
@@ -84,5 +91,43 @@ public class HorseManager {
         if (jumpLevel >= 5) { 
             safeFallAttribute.setBaseValue(MAX_SAFE_FALL_DISTANCE); 
         } 
+    }
+
+    public void tickFlyingHorse(JavaPlugin plugin, Horse horse) {
+
+        ItemStack armor = horse.getInventory().getArmor();
+
+        if (!DivineArmor.isDivineArmor(plugin, armor)) {
+            return;
+        }
+
+        if (horse.getPassengers().isEmpty()) {
+            return;
+        }
+
+        if (!(horse.getPassengers().getFirst() instanceof Player player)) {
+            return;
+        }
+
+        if (!player.getCurrentInput().isForward()) {
+            horse.setVelocity(new Vector(0, 0, 0));
+            return;
+        }
+
+        Vector direction = player.getLocation()
+                .getDirection()
+                .normalize();
+
+        horse.setVelocity(direction.multiply(0.8));
+
+        Location particleLocation = horse.getLocation().clone().add(0, -0.8, 0);
+
+        horse.getWorld().spawnParticle(
+                Particle.CLOUD,
+                particleLocation,
+                5,
+                0.3, 0.05, 0.3,
+                0.02
+        );
     }
 }

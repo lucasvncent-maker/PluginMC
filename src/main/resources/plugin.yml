@@ -11,3 +11,6 @@ commands:
   elisa:
     description: Dit les termes sur la goat
     usage: /elisa
+  start_race:
+    description: Démarre une course
+    usage: /start_race <id>

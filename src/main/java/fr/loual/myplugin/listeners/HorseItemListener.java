@@ -23,13 +23,34 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.Bukkit;
 import org.bukkit.util.RayTraceResult;
+import fr.loual.myplugin.items.DivineArmor;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class HorseItemListener implements Listener {
 
     private final MyPlugin plugin;
-
+    
     public HorseItemListener(MyPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onHorseDamage(EntityDamageEvent event) {
+
+        if (!(event.getEntity() instanceof Horse horse)) {
+            return;
+        }
+
+        if (event.getCause() != EntityDamageEvent.DamageCause.FALL) {
+            return;
+        }
+
+        ItemStack armor = horse.getInventory().getArmor();
+
+        if (DivineArmor.isDivineArmor(plugin, armor)) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
