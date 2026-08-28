@@ -10,16 +10,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class HorseApple {
+public class HorseAnalyzer {
 
-    private static final String ITEM_ID = "horse_apple";
+    private static final String ITEM_ID = "horse_analyzer";
+    private static final Material baseItem = Material.SPYGLASS;
+    private static final String displayName = "Analyseur Equin";
     private static final NamedTextColor color = NamedTextColor.GOLD;
     private static final Boolean isEnchanted = true;
-    private static final String displayName = "Pomme de vigueur";
-    private static final Material baseItem = Material.APPLE;
 
     public static ItemStack create(JavaPlugin plugin) {
-        ItemStack item = new ItemStack(Material.APPLE);
+        ItemStack item = new ItemStack(baseItem);
         ItemMeta meta = item.getItemMeta();
 
         meta.displayName(
@@ -40,7 +40,7 @@ public class HorseApple {
         return item;
     }
 
-    public static boolean isHorseApple(JavaPlugin plugin, ItemStack item) {
+    public static boolean isHorseAnalyzer(JavaPlugin plugin, ItemStack item) {
         if (item == null || item.getType() != baseItem) {
             return false;
         }

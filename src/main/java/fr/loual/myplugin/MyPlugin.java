@@ -4,7 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import fr.loual.myplugin.commands.Coords;
 import fr.loual.myplugin.commands.Elisa;
 
-import fr.loual.myplugin.recipes.HorseAppleRecipe;
+import fr.loual.myplugin.recipes.VigorAppleRecipe;
 import fr.loual.myplugin.recipes.HorseAnalyzerRecipe;
 
 import fr.loual.myplugin.horses.HorseManager;
@@ -20,7 +20,7 @@ public class MyPlugin extends JavaPlugin {
         getCommand("coords").setExecutor(new Coords());
         getCommand("elisa").setExecutor(new Elisa());
 
-        HorseAppleRecipe.register(this);
+        VigorAppleRecipe.register(this);
         HorseAnalyzerRecipe.register(this);
 
         getServer().getPluginManager().registerEvents(
