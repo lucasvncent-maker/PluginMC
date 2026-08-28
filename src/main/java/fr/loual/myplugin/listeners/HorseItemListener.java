@@ -5,6 +5,7 @@ import fr.loual.myplugin.MyPlugin;
 
 import fr.loual.myplugin.items.VigorApple;
 import fr.loual.myplugin.items.HasteBamboo;
+import fr.loual.myplugin.items.HealthyGrass;
 import fr.loual.myplugin.items.HorseAnalyzer;
 
 import fr.loual.myplugin.horses.HorseData;
@@ -47,6 +48,10 @@ public class HorseItemListener implements Listener {
         if (HasteBamboo.isHasteBamboo(plugin, item)) {
             onHasteBamboo(plugin, horse, event, item);
         }
+
+        if (HealthyGrass.isHealthyGrass(plugin, item)) {
+            onHealthyGrass(plugin, horse, event, item);
+        }
     }
 
     @EventHandler
@@ -74,6 +79,22 @@ public class HorseItemListener implements Listener {
         plugin.getHorseManager().applyStats(horse);
 
         event.getPlayer().sendMessage("§6Votre cheval a gagné +1 niveau de vitesse !");
+        event.setCancelled(true);
+    }
+
+    public void onHealthyGrass(MyPlugin plugin, Horse horse, PlayerInteractEntityEvent event, ItemStack item) {
+        HorseData data = plugin.getHorseManager().getData(horse);
+
+        item.setAmount(item.getAmount() - 1);
+        if (data.getHealthLevel() == data.MAX_HEALTH_LEVEL) {
+            event.getPlayer().sendMessage("§6Votre cheval a déjà atteint le niveau de santé maximal !");
+            return;
+        }
+        
+        data.addHealthLevel(1);
+        plugin.getHorseManager().applyStats(horse);
+
+        event.getPlayer().sendMessage("§6Votre cheval a gagné +1 niveau de santé !");
         event.setCancelled(true);
     }
 

@@ -9,7 +9,7 @@ public class HorseData {
 
     private static final double MAX_BASE_SPEED = 0.3375;
     private static final double MAX_BASE_JUMP = 1.0;
-    private static final double MAX_BASE_HEALTH = 30.0;
+    private static final double MAX_BASE_HEALTH = 60.0;
 
     private double jumpLevel;
     private double speedLevel;
@@ -55,7 +55,7 @@ public class HorseData {
     }
 
     public void addHealthLevel(double amount) {
-        jumpLevel = Math.min(MAX_HEALTH_LEVEL, healthLevel + amount);
+        healthLevel = Math.min(MAX_HEALTH_LEVEL, healthLevel + amount);
     }
 
     public void addJumpLevel(double amount) {

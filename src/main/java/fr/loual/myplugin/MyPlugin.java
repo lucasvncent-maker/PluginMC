@@ -7,6 +7,7 @@ import fr.loual.myplugin.commands.Elisa;
 import fr.loual.myplugin.recipes.VigorAppleRecipe;
 import fr.loual.myplugin.recipes.HorseAnalyzerRecipe;
 import fr.loual.myplugin.recipes.HasteBambooRecipe;
+import fr.loual.myplugin.recipes.HealthyGrassRecipe;
 
 import fr.loual.myplugin.horses.HorseManager;
 
@@ -24,6 +25,7 @@ public class MyPlugin extends JavaPlugin {
         VigorAppleRecipe.register(this);
         HorseAnalyzerRecipe.register(this);
         HasteBambooRecipe.register(this);
+        HealthyGrassRecipe.register(this);
 
         getServer().getPluginManager().registerEvents(
                 new HorseItemListener(this),

@@ -31,7 +31,23 @@ public class HorseManager {
 
         applyJumpStats(horse);
         applySpeedStats(horse);
+        applyHealthStats(horse);
     }
+
+
+    public void applyHealthStats(Horse horse) {
+        AttributeInstance healthAttribute = horse.getAttribute(Attribute.MAX_HEALTH);
+        HorseData horseData = getData(horse);
+
+        if (healthAttribute == null) { return; }
+
+        double healthLevel = horseData.getHealthLevel();
+        double bonusHealth = 1.0 + (2 * healthLevel);
+        double baseHealth = horseData.getBaseHealth();
+        double newHealth = baseHealth + bonusHealth;
+        healthAttribute.setBaseValue(newHealth);
+    }
+
 
     public void applyJumpStats(Horse horse) {
         AttributeInstance jumpAttribute = horse.getAttribute(Attribute.JUMP_STRENGTH);

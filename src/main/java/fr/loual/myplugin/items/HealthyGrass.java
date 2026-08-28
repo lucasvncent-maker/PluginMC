@@ -1,0 +1,61 @@
+package fr.loual.myplugin.items;
+
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+
+public class HealthyGrass {
+
+    private static final String ITEM_ID = "healthy_grass";
+    private static final NamedTextColor color = NamedTextColor.GOLD;
+    private static final Boolean isEnchanted = true;
+    private static final String displayName = "Herbes reluisantes";
+    private static final Material baseItem = Material.SHORT_GRASS;
+
+    public static ItemStack create(JavaPlugin plugin) {
+        ItemStack item = new ItemStack(baseItem);
+        ItemMeta meta = item.getItemMeta();
+
+        meta.displayName(
+            Component.text(displayName, color)
+        );
+
+        meta.setEnchantmentGlintOverride(isEnchanted);
+
+        NamespacedKey key = new NamespacedKey(plugin, ITEM_ID);
+        meta.getPersistentDataContainer().set(
+                key,
+                PersistentDataType.BYTE,
+                (byte) 1
+        );
+
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
+    public static boolean isHealthyGrass(JavaPlugin plugin, ItemStack item) {
+        if (item == null || item.getType() != baseItem) {
+            return false;
+        }
+
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta == null) {
+            return false;
+        }
+
+        NamespacedKey key = new NamespacedKey(plugin, ITEM_ID);
+
+        return meta.getPersistentDataContainer().has(
+                key,
+                PersistentDataType.BYTE
+        );
+    }
+}
