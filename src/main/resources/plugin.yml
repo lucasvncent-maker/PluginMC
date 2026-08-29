@@ -14,3 +14,6 @@ commands:
   start_race:
     description: Démarre une course
     usage: /start_race <id>
+  stop_race:
+    description: Arrête la course actuelle
+    usage: /stop_race

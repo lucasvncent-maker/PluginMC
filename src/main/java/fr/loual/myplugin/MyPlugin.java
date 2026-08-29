@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import fr.loual.myplugin.commands.Coords;
 import fr.loual.myplugin.commands.Elisa;
 import fr.loual.myplugin.commands.StartRace;
+import fr.loual.myplugin.commands.StopRace;
 
 import fr.loual.myplugin.recipes.VigorAppleRecipe;
 import fr.loual.myplugin.recipes.HorseAnalyzerRecipe;
@@ -16,6 +17,8 @@ import fr.loual.myplugin.horses.HorseManager;
 import fr.loual.myplugin.races.HorseRaceManager;
 
 import fr.loual.myplugin.listeners.HorseItemListener;
+import fr.loual.myplugin.listeners.HorseRaceListener;
+
 import org.bukkit.World;
 import org.bukkit.entity.Horse;
 import org.bukkit.WorldCreator;
@@ -30,6 +33,7 @@ public class MyPlugin extends JavaPlugin {
         getCommand("coords").setExecutor(new Coords());
         getCommand("elisa").setExecutor(new Elisa());
         getCommand("start_race").setExecutor(new StartRace(this));
+        getCommand("stop_race").setExecutor(new StopRace(this));
 
         VigorAppleRecipe.register(this);
         HorseAnalyzerRecipe.register(this);
@@ -38,6 +42,7 @@ public class MyPlugin extends JavaPlugin {
         DivineArmorRecipe.register(this);
 
         getServer().getPluginManager().registerEvents(new HorseItemListener(this), this);
+        getServer().getPluginManager().registerEvents(new HorseRaceListener(this), this);
 
 
         getLogger().info("MyPlugin est activé !");
@@ -55,13 +60,20 @@ public class MyPlugin extends JavaPlugin {
             1L
         );
 
-        WorldCreator creator = new WorldCreator("horse_race_01");
+        Bukkit.getScheduler().runTaskTimer(
+                this,
+                () -> horseRaceManager.tick(),
+                0L,
+                1L
+        );
+
+        WorldCreator creator = new WorldCreator("horse_races");
         World raceWorld = creator.createWorld();
 
         if (raceWorld == null) {
-            getLogger().severe("Impossible de charger horse_race_01 !");
+            getLogger().severe("Impossible de charger horse_races !");
         } else {
-            getLogger().info("Monde horse_race_01 chargé !");
+            getLogger().info("Monde horse_races chargé !");
         }
 
     }

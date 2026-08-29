@@ -1,0 +1,9 @@
+name: "First race"
+
+world: "horse_races"
+
+finish_z: 250
+max_time: 30.0
+start_x: 0.5
+start_y: 2
+start_z: 0.5
