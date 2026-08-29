@@ -16,15 +16,17 @@ public class HorseRace {
     private final Location returnLocation;
     private final long startTime;
     private final HorseRaceConfig config;
+    private final int raceId;
 
     private int nextObstacle = 0;
 
-    public HorseRace(Player player, Horse horse, Location returnLocation,  HorseRaceConfig config) {
+    public HorseRace(Player player, Horse horse, Location returnLocation,  HorseRaceConfig config, int raceId) {
         this.player = player;
         this.horse = horse;
         this.returnLocation = returnLocation;
         this.startTime = System.currentTimeMillis();
         this.config = config;
+        this.raceId = raceId;
     }
 
     public Player getPlayer() {
@@ -45,5 +47,9 @@ public class HorseRace {
 
     public HorseRaceConfig getConfig() {
         return config;
+    }
+
+    public int getRaceId() {
+        return raceId;
     }
 }

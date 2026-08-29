@@ -7,6 +7,7 @@ import fr.loual.myplugin.items.VigorApple;
 import fr.loual.myplugin.items.HasteBamboo;
 import fr.loual.myplugin.items.HealthyGrass;
 import fr.loual.myplugin.items.HorseAnalyzer;
+import fr.loual.myplugin.items.RacePass;
 
 import fr.loual.myplugin.horses.HorseData;
 import org.bukkit.Sound;
@@ -85,6 +86,19 @@ public class HorseItemListener implements Listener {
             onHorseAnalyzer(plugin, event, item); 
         }
 
+        if (event.getAction().isRightClick() && RacePass.isRacePass(plugin, item)) {
+            onRacePass(plugin, item, player, event);
+        }
+
+    }
+
+    public void onRacePass(MyPlugin plugin, ItemStack item, Player player, PlayerInteractEvent event) {
+        int raceId = RacePass.getRaceId(plugin, item);
+        boolean raceStarted = plugin.getHorseRaceManager().startRace(player, raceId);
+        event.setCancelled(true);
+        if (raceStarted) {
+            item.setAmount(item.getAmount() - 1);
+        }
     }
 
     public void onHasteBamboo(MyPlugin plugin, Horse horse, PlayerInteractEntityEvent event, ItemStack item) {

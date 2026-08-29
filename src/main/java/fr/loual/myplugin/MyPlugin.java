@@ -11,6 +11,7 @@ import fr.loual.myplugin.recipes.HorseAnalyzerRecipe;
 import fr.loual.myplugin.recipes.HasteBambooRecipe;
 import fr.loual.myplugin.recipes.HealthyGrassRecipe;
 import fr.loual.myplugin.recipes.DivineArmorRecipe;
+import fr.loual.myplugin.recipes.RacePassRecipe;
 import org.bukkit.Bukkit;
 
 import fr.loual.myplugin.horses.HorseManager;
@@ -40,6 +41,7 @@ public class MyPlugin extends JavaPlugin {
         HasteBambooRecipe.register(this);
         HealthyGrassRecipe.register(this);
         DivineArmorRecipe.register(this);
+        RacePassRecipe.register(this);
 
         getServer().getPluginManager().registerEvents(new HorseItemListener(this), this);
         getServer().getPluginManager().registerEvents(new HorseRaceListener(this), this);

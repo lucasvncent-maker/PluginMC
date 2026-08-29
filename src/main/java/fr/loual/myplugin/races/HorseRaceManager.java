@@ -5,9 +5,11 @@ import org.bukkit.Location;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import fr.loual.myplugin.MyPlugin;
 import fr.loual.myplugin.races.HorseRaceConfig;
+import fr.loual.myplugin.items.RacePass;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,23 +29,22 @@ public class HorseRaceManager {
     public HorseRaceManager(MyPlugin plugin) {
         this.plugin = plugin;
 
-        plugin.saveResource("races/1.yml", false);
-
+        saveRaceResources();
         loadRaceConfigs();
     }
 
-    public void startRace(Player player,  int raceId) {
+    public boolean startRace(Player player,  int raceId) {
 
         if (activeRaces.containsKey(player.getUniqueId())) {
             player.sendMessage("§cVous êtes déjà dans une course !");
-            return;
+            return false;
         }
 
         World world = Bukkit.getWorld("horse_races");
 
         if (world == null) {
             player.sendMessage("§cLe monde de la course n'est pas chargé.");
-            return;
+            return false;
         }
 
         Location returnLocation = player.getLocation().clone();
@@ -51,14 +52,14 @@ public class HorseRaceManager {
 
         if (horse == null) {
             player.sendMessage("§cVous devez être à cheval.");
-            return;
+            return false;
         }
 
         HorseRaceConfig config = raceConfigs.get(raceId);
 
         if (config == null) {
             player.sendMessage("§cCette course n'existe pas.");
-            return;
+            return false;
         }
 
         Location start = config.getStartLocation(world);
@@ -68,24 +69,15 @@ public class HorseRaceManager {
         horse.teleport(start);
         horse.addPassenger(player);
 
-        HorseRace race = new HorseRace(
-                player,
-                horse,
-                returnLocation,
-                config
-        );
+        HorseRace race = new HorseRace(player, horse, returnLocation, config,  raceId);
 
-        activeRaces.put(
-                player.getUniqueId(),
-                race
-        );
+        activeRaces.put(player.getUniqueId(), race);
 
-        player.sendMessage("§6§lCOURSE !");
-        player.sendMessage("§eFranchissez un maximum d'obstacles !");
+        player.sendMessage("§eAtteignez la ligne d'arrivée le plus rapidement possible !");
+        return true;
     }
 
     public void stopRace(Player player) {
-
         HorseRace race = activeRaces.get(player.getUniqueId());
 
         if (race == null) {
@@ -93,13 +85,24 @@ public class HorseRaceManager {
             return;
         }
 
-        finishRace(race, "§cVous avez abandonné la course.");
+        finishRace(race, "§cVous avez abandonné la course.", 0);
     }
 
-    private void finishRace(HorseRace race, String message) {
-
+    private void finishRace(HorseRace race, String message, double raceTime) {
         Player player = race.getPlayer();
         Horse horse = race.getHorse();
+        
+        HorseRaceConfig config = race.getConfig();
+        int raceId = race.getRaceId();
+
+        if (raceTime != 0 && raceTime <= config.getMaxTime()) {
+            HorseRaceConfig nextConfig = raceConfigs.get(raceId + 1);
+            if (nextConfig != null) {
+                ItemStack nextPass = RacePass.create(plugin, raceId + 1, nextConfig.getName());
+                nextPass.setAmount(5);
+                player.getInventory().addItem(nextPass);
+            }
+        }
 
         activeRaces.remove(player.getUniqueId());
 
@@ -132,12 +135,12 @@ public class HorseRaceManager {
             HorseRaceConfig config = race.getConfig();
 
             if (!player.isOnline()) {
-                finishRace(race, "Player disconnected, end of the race !");
+                finishRace(race, "Player disconnected, end of the race !", 0);
                 continue;
             }
 
             if (player.getLocation().getY() < 0) {
-                finishRace(race,"§cVous êtes tombé du parcours !");
+                finishRace(race,"§cVous êtes tombé du parcours !", 0);
                 continue;
             }
             
@@ -145,7 +148,7 @@ public class HorseRaceManager {
             double seconds = elapsed / 1000.0;
 
             if (horse.getLocation().getZ() >= config.getFinishZ()) {
-                finishRace(race, "§6§lARRIVÉE ! §eTemps : " + String.format("%.2f", seconds) + " secondes");
+                finishRace(race, "§6§lARRIVÉE ! §eTemps : " + String.format("%.2f", seconds) + " secondes", seconds);
                 continue;
             }
         }
@@ -167,21 +170,64 @@ public class HorseRaceManager {
         activeRaces.remove(player.getUniqueId());
     }
 
-    // TODO MAJ en fonction du numéro de course
     private void loadRaceConfigs() {
 
-        FileConfiguration config = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "races/1.yml"));
+        File racesFolder = new File(plugin.getDataFolder(), "races");
 
-        String name = config.getString("name", "Course");
-        double finishZ = config.getDouble("finish_z", 250);
-        double maxTime = config.getDouble("max_time", 30.0);
+        if (!racesFolder.exists()) {
+            racesFolder.mkdirs();
+        }
 
-        double startX = config.getDouble("start_x");
-        double startY = config.getDouble("start_y");
-        double startZ = config.getDouble("start_z");
+        File[] files = racesFolder.listFiles((dir, name) -> name.endsWith(".yml"));
 
-        HorseRaceConfig raceConfig = new HorseRaceConfig(name, startX, startY, startZ, finishZ, maxTime);
+        if (files == null) {
+            return;
+        }
 
-        raceConfigs.put(1, raceConfig);
+        for (File file : files) {
+
+            try {
+                String fileName = file.getName();
+
+                int raceId = Integer.parseInt(fileName.substring(0, fileName.length() - 4));
+
+                FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+                String name = config.getString("name", "Course");
+
+                double startX = config.getDouble("start_x");
+                double startY = config.getDouble("start_y");
+                double startZ = config.getDouble("start_z");
+
+                double finishZ = config.getDouble("finish_z");
+                double maxTime = config.getDouble("max_time", 30.0);
+
+                HorseRaceConfig raceConfig = new HorseRaceConfig(name, startX, startY, startZ, finishZ, maxTime);
+
+                raceConfigs.put(raceId, raceConfig);
+
+                plugin.getLogger().info("[MyPlugin] Course " + raceId + " chargée : " + name);
+
+            } catch (NumberFormatException e) {
+                plugin.getLogger().warning("[MyPlugin] Fichier de course ignoré : " + file.getName()  + " (le nom doit être un nombre)");
+            }
+        }
+    }
+
+    private void saveRaceResources() {
+
+        for (int i = 1; ; i++) {
+
+            String resourcePath = "races/" + i + ".yml";
+
+            if (plugin.getResource(resourcePath) == null) {
+                break;
+            }
+            
+            // TODO Set to false when all well configured
+            plugin.saveResource(resourcePath, true);
+
+            plugin.getLogger().info("[MyPlugin] Course copiée : " + resourcePath);
+        }
     }
 }

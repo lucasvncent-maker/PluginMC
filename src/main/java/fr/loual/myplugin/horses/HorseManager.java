@@ -41,7 +41,6 @@ public class HorseManager {
         applyHealthStats(horse);
     }
 
-
     public void applyHealthStats(Horse horse) {
         AttributeInstance healthAttribute = horse.getAttribute(Attribute.MAX_HEALTH);
         HorseData horseData = getData(horse);
@@ -54,7 +53,6 @@ public class HorseManager {
         double newHealth = baseHealth + bonusHealth;
         healthAttribute.setBaseValue(newHealth);
     }
-
 
     public void applyJumpStats(Horse horse) {
         AttributeInstance jumpAttribute = horse.getAttribute(Attribute.JUMP_STRENGTH);
