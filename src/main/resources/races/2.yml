@@ -7,3 +7,10 @@ max_time: 30.0
 start_x: 1000.5
 start_y: 2
 start_z: 0.5
+
+accepts_divine_armor: false
+
+min_jump_strength: 0.76
+max_jump_strength: 999
+min_speed: 0.22
+max_speed: 999

@@ -1,0 +1,22 @@
+{
+  "parent": "myplugin:participate_to_race",
+  "display": {
+    "icon": {
+      "id": "minecraft:paper"
+    },
+    "title": {
+      "text": "Remporter la deuxième course"
+    },
+    "description": {
+      "text": "Arrivez à la ligne d'arrivée à temps..."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "observe": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

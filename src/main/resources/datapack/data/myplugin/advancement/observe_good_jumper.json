@@ -1,0 +1,22 @@
+{
+  "parent": "myplugin:craft_haste_bamboo",
+  "display": {
+    "icon": {
+      "id": "minecraft:leather_horse_armor"
+    },
+    "title": {
+      "text": "Bon sauteur"
+    },
+    "description": {
+      "text": "Observez un cheval possédant au moins 0.7 de puissance de saut."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "observe": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

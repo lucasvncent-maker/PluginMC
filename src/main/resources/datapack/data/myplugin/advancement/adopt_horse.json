@@ -1,0 +1,27 @@
+{
+  "parent": "myplugin:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:saddle"
+    },
+    "title": {
+      "text": "Adopter un cheval"
+    },
+    "description": {
+      "text": "Adoptez votre premier cheval."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "adopt": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:horse"
+        }
+      }
+    }
+  }
+}

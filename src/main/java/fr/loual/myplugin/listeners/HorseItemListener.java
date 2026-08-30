@@ -8,6 +8,10 @@ import fr.loual.myplugin.items.HasteBamboo;
 import fr.loual.myplugin.items.HealthyGrass;
 import fr.loual.myplugin.items.HorseAnalyzer;
 import fr.loual.myplugin.items.RacePass;
+import fr.loual.myplugin.items.DivineArmor;
+
+import fr.loual.myplugin.advancements.AdvancementManager;
+import org.bukkit.event.inventory.CraftItemEvent;
 
 import fr.loual.myplugin.horses.HorseData;
 import org.bukkit.Sound;
@@ -15,6 +19,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.EquipmentSlot;
@@ -24,16 +29,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.Bukkit;
 import org.bukkit.util.RayTraceResult;
-import fr.loual.myplugin.items.DivineArmor;
+
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.attribute.Attribute;
 
 public class HorseItemListener implements Listener {
 
     private final MyPlugin plugin;
+    private AdvancementManager advancementManager;
     
     public HorseItemListener(MyPlugin plugin) {
         this.plugin = plugin;
+        this.advancementManager = plugin.getAdvancementManager();
     }
 
     @EventHandler
@@ -92,11 +100,53 @@ public class HorseItemListener implements Listener {
 
     }
 
+    @EventHandler
+    public void onHorseTame(EntityTameEvent event) {
+        if (!(event.getEntity() instanceof Horse)) {
+            return;
+        }
+
+        if (!(event.getOwner() instanceof Player player)) {
+            return;
+        }
+
+        plugin.awardAdvancement(player, "adopt_horse");
+        player.sendMessage("Félicitations !");
+        this.advancementManager.discoverRecipe(player, "horse_analyzer");
+    }
+
+    @EventHandler
+    public void onCraftItem(CraftItemEvent event) {
+
+        if (!(event.getWhoClicked() instanceof Player player)) {
+            return;
+        }
+
+        if (event.getRecipe().getResult().isSimilar(VigorApple.create(plugin))) {
+            this.advancementManager.award(player, "craft_vigor_apple");
+            this.advancementManager.discoverRecipe(player, "haste_bamboo");
+            return;
+        }
+
+        if (event.getRecipe().getResult().isSimilar(HorseAnalyzer.create(plugin))) {
+            this.advancementManager.award(player, "craft_horse_analyzer");
+            this.advancementManager.discoverRecipe(player, "vigor_apple");
+            this.advancementManager.discoverRecipe(player, "race_pass");
+            return;
+        }
+
+        if (event.getRecipe().getResult().isSimilar(HasteBamboo.create(plugin))) {
+            this.advancementManager.award(player, "craft_haste_bamboo");
+            return;
+        }
+    }
+
     public void onRacePass(MyPlugin plugin, ItemStack item, Player player, PlayerInteractEvent event) {
         int raceId = RacePass.getRaceId(plugin, item);
         boolean raceStarted = plugin.getHorseRaceManager().startRace(player, raceId);
         event.setCancelled(true);
         if (raceStarted) {
+            this.advancementManager.award(player, "participate_to_race");
             item.setAmount(item.getAmount() - 1);
         }
     }
@@ -148,7 +198,6 @@ public class HorseItemListener implements Listener {
         event.getPlayer().sendMessage("§6Votre cheval a gagné +1 niveau de saut !");
     }
 
-
     public void onHorseAnalyzer(MyPlugin plugin, PlayerInteractEvent event, ItemStack item) {
         Player player = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -169,6 +218,8 @@ public class HorseItemListener implements Listener {
             
             Horse observedHorse = (Horse) result.getHitEntity();
             onHorseFound(plugin, observedHorse, event, item);
+
+    
 
         }, 1L);
     }
@@ -192,6 +243,10 @@ public class HorseItemListener implements Listener {
 
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
             event.getPlayer().sendMessage(Component.text("Pas de chance, votre ").append(handItem.getItemMeta().displayName()).append(Component.text(" s'est cassé...")));
+            
+            if (horse.getAttribute(Attribute.JUMP_STRENGTH).getValue() >= 0.7) {
+                this.advancementManager.award(event.getPlayer(), "observe_good_jumper");
+            }
         }  
     }
 }

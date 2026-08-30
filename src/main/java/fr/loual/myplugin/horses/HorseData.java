@@ -100,41 +100,24 @@ public class HorseData {
 
     public Component getResume() {
         return Component.text()
-                .append(Component.text(
-                        "._.-. " + getHorseName() + " .-._.\n",
-                        NamedTextColor.GOLD
-                ))
+                .append(Component.text("._.-. " + getHorseName() + " .-._.\n",NamedTextColor.GOLD))
                 .append(Component.text("- Vitesse de base: ", NamedTextColor.GRAY))
-                .append(Component.text(
-                        "%.4f/%.4f\n".formatted(getBaseSpeed(), MAX_BASE_SPEED),
-                        NamedTextColor.WHITE
-                ))
+                .append(Component.text("%.1f%%\n".formatted(getBaseSpeed() / MAX_BASE_SPEED * 100), NamedTextColor.WHITE))
                 .append(Component.text("- Saut de base: ", NamedTextColor.GRAY))
-                .append(Component.text(
-                        "%.4f/%.4f\n".formatted(getBaseJumpStrength(), MAX_BASE_JUMP),
-                        NamedTextColor.WHITE
-                ))
+                .append(Component.text("%.1f%%\n".formatted(getBaseJumpStrength() / MAX_BASE_JUMP * 100), NamedTextColor.WHITE))
                 .append(Component.text("- Points de vie de base: ", NamedTextColor.GRAY))
-                .append(Component.text(
-                        "%.1f/%.1f\n\n".formatted(getBaseHealth(), MAX_BASE_HEALTH),
-                        NamedTextColor.WHITE
-                ))
+                .append(Component.text("%.1f%%\n\n".formatted(getBaseHealth() / MAX_BASE_HEALTH * 100), NamedTextColor.WHITE))
                 .append(Component.text("Bonus:\n", NamedTextColor.GREEN))
                 .append(Component.text("- Vitesse: ", NamedTextColor.GRAY))
-                .append(Component.text(
-                        "%.1f/9\n".formatted(getSpeedLevel()),
-                        NamedTextColor.AQUA
-                ))
+                .append(Component.text("%d/9 ".formatted((int) getSpeedLevel()), NamedTextColor.AQUA))
+                .append(Component.text("([Total] %.2f m/s)\n".formatted(this.horse.getAttribute(Attribute.MOVEMENT_SPEED).getValue()),  NamedTextColor.WHITE))
                 .append(Component.text("- Saut: ", NamedTextColor.GRAY))
-                .append(Component.text(
-                        "%.1f/9\n".formatted(getJumpLevel()),
-                        NamedTextColor.AQUA
-                ))
+                .append(Component.text("%d/9 ".formatted((int) getJumpLevel()), NamedTextColor.AQUA))
+                .append(Component.text("([Total] %.2f m)\n".formatted(this.horse.getAttribute(Attribute.JUMP_STRENGTH).getValue()), NamedTextColor.WHITE))
                 .append(Component.text("- PV: ", NamedTextColor.GRAY))
-                .append(Component.text(
-                        "%.1f/9".formatted(getHealthLevel()),
-                        NamedTextColor.AQUA
-                ))
+                .append(Component.text("%d/9 ".formatted((int) getHealthLevel()), NamedTextColor.AQUA))
+                .append(Component.text("([Total] %.1f PV)".formatted(this.horse.getAttribute(Attribute.MAX_HEALTH).getValue()), NamedTextColor.WHITE))
                 .build();
     }
+
 }

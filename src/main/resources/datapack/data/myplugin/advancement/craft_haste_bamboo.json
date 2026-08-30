@@ -1,0 +1,25 @@
+{
+  "parent": "myplugin:craft_vigor_apple",
+  "display": {
+    "icon": {
+      "id": "minecraft:bamboo"
+    },
+    "title": {
+      "text": "Bambou fastueux"
+    },
+    "description": {
+      "text": "Fabriquez du bambou fastueux."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "craft": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "myplugin:craft_bamboo"
+      }
+    }
+  }
+}

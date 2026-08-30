@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import fr.loual.myplugin.MyPlugin;
 import fr.loual.myplugin.races.HorseRaceConfig;
 import fr.loual.myplugin.items.RacePass;
+import fr.loual.myplugin.items.DivineArmor;
+import org.bukkit.attribute.Attribute;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,6 +64,20 @@ public class HorseRaceManager {
             return false;
         }
 
+        if (horse.getAttribute(Attribute.MOVEMENT_SPEED).getValue() < config.getMinSpeed() || horse.getAttribute(Attribute.JUMP_STRENGTH).getValue() < config.getMinJumpStrength()) {
+            player.sendMessage("§cVotre cheval n'a pas les capacités suffisantes pour concourir.\n" + 
+            "§7Prérequis : Vitesse §f%.2f m/s §7| Saut : §f%.2f m".formatted(config.getMinSpeed(), config.getMinJumpStrength()));
+
+            return false;
+        }
+
+        ItemStack armor = horse.getInventory().getArmor();
+
+        if (DivineArmor.isDivineArmor(plugin, armor) && !config.getAcceptsDivineArmor()) {
+            player.sendMessage("§cVous ne pouvez pas rejoindre cette course avec une Armure Divine sur votre cheval");
+            return false;
+        }
+
         Location start = config.getStartLocation(world);
         
         horse.removePassenger(player);
@@ -95,12 +111,20 @@ public class HorseRaceManager {
         HorseRaceConfig config = race.getConfig();
         int raceId = race.getRaceId();
 
-        if (raceTime != 0 && raceTime <= config.getMaxTime()) {
-            HorseRaceConfig nextConfig = raceConfigs.get(raceId + 1);
-            if (nextConfig != null) {
-                ItemStack nextPass = RacePass.create(plugin, raceId + 1, nextConfig.getName());
-                nextPass.setAmount(5);
-                player.getInventory().addItem(nextPass);
+        if (raceTime != 0) {
+            if (raceTime <= config.getMaxTime()) {
+                HorseRaceConfig nextConfig = raceConfigs.get(raceId + 1);
+                if (nextConfig != null) {
+                    ItemStack nextPass = RacePass.create(plugin, raceId + 1, nextConfig.getName());
+                    nextPass.setAmount(5);
+                    player.getInventory().addItem(nextPass);
+                    player.sendMessage("§6§lFélicitations ! §eVous avez terminé la course §6" + config.getName() + " §een §6" + String.format("%.2f", raceTime) + " §esecondes !");
+                    player.sendMessage("§aVous obtenez des invitations à d'autres courses.");
+                }
+            } else {
+                player.sendMessage("§cVous terminez la course en §f" + String.format("%.2f", raceTime)+ " §csecondes.");
+                player.sendMessage("§7C'est bien, mais il faut au maximum §f" + String.format("%.2f", config.getMaxTime()) + " §7secondes afin d'obtenir des récompenses !");
+                player.sendMessage("§7Essayez de vous améliorer ou améliorez les statistiques " + "de votre cheval pour progresser.");
             }
         }
 
@@ -202,7 +226,13 @@ public class HorseRaceManager {
                 double finishZ = config.getDouble("finish_z");
                 double maxTime = config.getDouble("max_time", 30.0);
 
-                HorseRaceConfig raceConfig = new HorseRaceConfig(name, startX, startY, startZ, finishZ, maxTime);
+                boolean accepts_divine_armor = config.getBoolean("accepts_divine_armor", false);
+                double min_jump_strength = config.getDouble("min_jump_strength");
+                double max_jump_strength = config.getDouble("max_jump_strength");
+                double min_speed = config.getDouble("min_speed");
+                double max_speed = config.getDouble("max_speed");
+
+                HorseRaceConfig raceConfig = new HorseRaceConfig(name, startX, startY, startZ, finishZ, maxTime, accepts_divine_armor, min_jump_strength, max_jump_strength, min_speed, max_speed);
 
                 raceConfigs.put(raceId, raceConfig);
 

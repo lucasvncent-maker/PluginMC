@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class VigorAppleRecipe {
 
     public static void register(JavaPlugin plugin) {
-        NamespacedKey key = new NamespacedKey(plugin, "horse_apple");
+        NamespacedKey key = new NamespacedKey(plugin, "vigor_apple");
 
         ItemStack result = VigorApple.create(plugin);
 

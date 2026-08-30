@@ -14,14 +14,16 @@ public class HorseRaceConfig {
     private final double finishZ;
     private final double maxTime;
 
-    public HorseRaceConfig(
-            String name,
-            double startX,
-            double startY,
-            double startZ,
-            double finishZ,
-            double maxTime
-    ) {
+    private final boolean accepts_divine_armor;
+
+    private final double min_jump_strength;
+    private final double max_jump_strength;
+    private final double min_speed;
+    private final double max_speed;
+
+
+    public HorseRaceConfig(String name, double startX, double startY, double startZ, double finishZ, double maxTime, boolean accepts_divine_armor, 
+        double min_jump_strength, double max_jump_strength, double min_speed, double max_speed) {
         this.name = name;
 
         this.finishZ = finishZ;
@@ -30,6 +32,32 @@ public class HorseRaceConfig {
         this.startX = startX;
         this.startY = startY;
         this.startZ = startZ;
+
+        this.accepts_divine_armor = accepts_divine_armor;
+        this.min_jump_strength = min_jump_strength;
+        this.max_jump_strength = max_jump_strength;
+        this.min_speed = min_speed;
+        this.max_speed = max_speed;
+    }
+
+    public boolean getAcceptsDivineArmor() {
+        return accepts_divine_armor;
+    }
+
+    public double getMinJumpStrength() {
+        return min_jump_strength;
+    }
+
+    public double getMaxJumpStrength() {
+        return max_jump_strength;
+    }
+
+    public double getMinSpeed() {
+        return min_speed;
+    }
+
+    public double getMaxSpeed() {
+        return max_speed;
     }
 
     public String getName() {

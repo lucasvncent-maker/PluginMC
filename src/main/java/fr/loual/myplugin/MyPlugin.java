@@ -24,12 +24,25 @@ import org.bukkit.World;
 import org.bukkit.entity.Horse;
 import org.bukkit.WorldCreator;
 
+import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import fr.loual.myplugin.advancements.AdvancementManager;
+
+import org.bukkit.NamespacedKey;
+import org.bukkit.advancement.Advancement;
+
 public class MyPlugin extends JavaPlugin {
     private final HorseManager horseManager = new HorseManager();
-    private HorseRaceManager horseRaceManager = new HorseRaceManager(this);
+    private HorseRaceManager horseRaceManager;
+    private AdvancementManager advancementManager;
 
     @Override
     public void onEnable() {
+        advancementManager = new AdvancementManager(this);
+        advancementManager.installDatapack();
+        horseRaceManager = new HorseRaceManager(this);
 
         getCommand("coords").setExecutor(new Coords());
         getCommand("elisa").setExecutor(new Elisa());
@@ -78,6 +91,15 @@ public class MyPlugin extends JavaPlugin {
             getLogger().info("Monde horse_races chargé !");
         }
 
+        // Bukkit.getScheduler().runTaskLater(this, () -> {
+        //     NamespacedKey key = new NamespacedKey(this, "root");
+        //     Advancement adv = Bukkit.getAdvancement(key);
+        //     if (adv != null) {
+        //         getLogger().info("🚀 Succès ! myplugin:root est enfin reconnu.");
+        //     } else {
+        //         getLogger().severe("❌ Échec : Toujours introuvable malgré le reload.");
+        //     }
+        // }, 60L);
     }
 
     public HorseManager getHorseManager() {
@@ -85,5 +107,25 @@ public class MyPlugin extends JavaPlugin {
     }
 
     public HorseRaceManager getHorseRaceManager() { return horseRaceManager; }
+
+    public void awardAdvancement(Player player, String advancementId) {
+        NamespacedKey key = new NamespacedKey(this, advancementId);
+        Advancement advancement = Bukkit.getAdvancement(key);
+
+        if (advancement == null) {
+            getLogger().warning("Advancement introuvable : " + key);
+            return;
+        }
+
+        AdvancementProgress progress =player.getAdvancementProgress(advancement);
+
+        for (String criterion : progress.getRemainingCriteria()) {
+            progress.awardCriteria(criterion);
+        }
+    }
+
+    public AdvancementManager getAdvancementManager() {
+        return advancementManager;
+    }
 
 }

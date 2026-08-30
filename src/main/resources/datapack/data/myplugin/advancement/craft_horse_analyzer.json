@@ -1,0 +1,25 @@
+{
+  "parent": "myplugin:adopt_horse",
+  "display": {
+    "icon": {
+      "id": "minecraft:spyglass"
+    },
+    "title": {
+      "text": "Analyseur équin"
+    },
+    "description": {
+      "text": "Fabriquez un analyseur équin."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "craft": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "myplugin:horse_analyzer"
+      }
+    }
+  }
+}

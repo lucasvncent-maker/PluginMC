@@ -1,0 +1,22 @@
+{
+  "parent": "myplugin:craft_vigor_apple",
+  "display": {
+    "icon": {
+      "id": "minecraft:paper"
+    },
+    "title": {
+      "text": "Première course"
+    },
+    "description": {
+      "text": "Participez à votre première course d'obstacles.."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "observe": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}
